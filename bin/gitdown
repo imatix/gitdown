@@ -79,7 +79,7 @@ while ($line < @input) {
             # allow double slash after : for url
             $imgpath =~ s|(?<!:)/+|/|g;
 
-            my $subpath .= "$symbols{PREBRANCH}/$symbols{BRANCH}/$symbols{SUBDIR}/images/";
+            my $subpath = "$symbols{PREBRANCH}/$symbols{BRANCH}/$symbols{SUBDIR}/images/";
             # remove starting /
             $subpath =~ s|^/||;
             # remove double /
