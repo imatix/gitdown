@@ -1,0 +1,63 @@
+#!/bin/sh
+################################################################################
+# tests by comparing genearted README.md from last commited README.md
+
+function normalize {
+  grep -v 'This document was published on ' $1
+}
+
+function normalize_images {
+  grep -v 'This document was published on ' $1 | \
+  grep -v '<img src='
+}
+
+function chk_return {
+  if test "$1" = "0"; then
+    echo "ok"
+  else
+    echo "failed"
+  fi
+}
+
+################################################################################
+
+compare=`mktemp`
+output=`mktemp`
+tmpfile=`mktemp`
+
+# compare against last commit
+git show HEAD^:README.md | normalize > $compare
+
+# normal output
+cp README.md $tmpfile
+bin/gitdown README.txt
+normalize README.md > $output
+diff -u $compare $output
+normal_output=`chk_return $?`
+cp $tmpfile README.md
+
+# normal file specified
+bin/gitdown README.txt $tmpfile
+normalize $tmpfile > $output
+diff -u $compare $output
+normal_file=`chk_return $?`
+
+# normal stdout
+bin/gitdown README.txt - | normalize > $output
+diff -u $compare $output
+normal_stdout=`chk_return $?`
+
+# local stdout
+bin/gitdown --to-local README.txt - | normalize_images > $output
+normalize_images $compare | diff -u - $output
+local_stdout=`chk_return $?`
+
+echo
+echo "Tests"
+echo "  normal output...$normal_output"
+echo "  normal file.....$normal_file"
+echo "  normal stdout...$normal_stdout"
+echo "  local stdout....$local_stdout"
+
+rm -f $compare $output $tmpfile
+
