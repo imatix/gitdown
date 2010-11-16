@@ -28,35 +28,49 @@ tmpfile=`mktemp`
 # compare against last commit
 git show HEAD^:README.md | normalize > $compare
 
-# normal output
+# normal auto
+echo "== normal auto =============="
 cp README.md $tmpfile
 bin/gitdown README.txt
 normalize README.md > $output
 diff -u $compare $output
-normal_output=`chk_return $?`
+normal_auto=`chk_return $?`
 cp $tmpfile README.md
 
 # normal file specified
+echo "== normal file =============="
 bin/gitdown README.txt $tmpfile
 normalize $tmpfile > $output
 diff -u $compare $output
 normal_file=`chk_return $?`
 
 # normal stdout
+echo "== normal stdout ============"
 bin/gitdown README.txt - | normalize > $output
 diff -u $compare $output
 normal_stdout=`chk_return $?`
 
+# local auto
+echo "== local auto ==============="
+cp README.md $tmpfile
+bin/gitdown --to-local README.txt
+normalize_images README.md > $output
+normalize_images $compare | diff -u - $output
+local_auto=`chk_return $?`
+cp $tmpfile README.md
+
 # local stdout
+echo "== local stdout ============="
 bin/gitdown --to-local README.txt - | normalize_images > $output
 normalize_images $compare | diff -u - $output
 local_stdout=`chk_return $?`
 
 echo
 echo "Tests"
-echo "  normal output...$normal_output"
+echo "  normal auto.....$normal_auto"
 echo "  normal file.....$normal_file"
 echo "  normal stdout...$normal_stdout"
+echo "  local auto......$local_auto"
 echo "  local stdout....$local_stdout"
 
 rm -f $compare $output $tmpfile
