@@ -46,7 +46,7 @@ die "Can't read $input: $!"
 
 while (<INPUT>) {
     chop;
-    if (/^\.pull\s+(.*?)([@,].+)?\s*$/) {
+    if (/^\.pull\s+(.+?)([@,].+)?\s*$/) {
         my ($source, $rest) = ($1, $2);
         my ($tag, $opts); #tags and opts are both optional
 
