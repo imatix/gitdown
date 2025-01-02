@@ -28,16 +28,20 @@ push(@INC, $path);
 #   Uses the Perl SFL modules from htmlpp
 require 'sflcvdp.pl';                   #   SFL date picture formatting
 
-$version = "2014.10.10";
+$version = "2025.01.02";
 
 #   Parse and validate provided filename
-die "Syntax: gitdoc textfilename\n"
-    unless $#ARGV == 0;
-$input = $ARGV [0];
+$input = $ARGV[0];
+die "Syntax: gitdown textfilename [markdownfilename]\n"
+    unless $input;
+die "Input should be a .txt file, not a .md file\n"
+    if $input =~ /\.md$/;
+
 $self = $input;
 $self =~ s/\.[^.]*$//;
-$output .= "$self.md";
-die "Input should be a .txt file, not a .md file\n"
+
+$output = $ARGV[1] || "$self.md";
+die "Input file cannot be the same as output file\n"
     if $input eq $output;
 
 #   Read input file into @input array
